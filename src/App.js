@@ -1,42 +1,32 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { createBrowserHistory } from 'history';
-import { Router, Redirect, Route, Switch } from 'react-router-dom';
-import logo from './logo.svg';
+import { Route, Switch, withRouter } from 'react-router-dom';
+import { check } from "./services/sessions";
+// import logo from './logo.svg';
 import './App.css';
 
+import LoginPage from './pages/login';
 
-const history = createBrowserHistory();
-const RootComponent = () => <Redirect to='/login' />;
+
 
 class App extends Component {
+
+  componentWillMount() {
+    const { history } = this.props;
+    check()
+      .catch(err => history.push('/login'))
+  }
+
   render() {
     return (
-        <Router history={ history }>
-          <div className='wrapper'>
-              <div className="App">
-                  <header className="App-header">
-                      <img src={logo} className="App-logo" alt="logo" />
-                      <p>
-                          Edit <code>src/App.js</code> and save to reload.
-                      </p>
-                      <a
-                          className="App-link"
-                          href="https://reactjs.org"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                      >
-                          Learn React
-                      </a>
-                  </header>
-              </div>
+        <div className='wrapper'>
+          {
             <Switch>
-                <Route exact path='/' />
-                <Route exact path='/login'/>
-                <Route component={ RootComponent } />
+              <Route exact path='/login' component={ LoginPage } />
+              <Route exact path='/' component={() => <div>DASHBOARD</div>} />
             </Switch>
-          </div>
-        </Router>
+          }
+        </div>
     );
   }
 }
@@ -47,4 +37,4 @@ const mapStateToProps = state => {
   }
 };
 
-export default connect(mapStateToProps)(App);
+export default withRouter(connect(mapStateToProps)(App));
